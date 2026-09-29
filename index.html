@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly Mentee Progress Check-in</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Inter, Arial, sans-serif;
+      background: #f4f7f5;
+      color: #17201b;
+      padding: 40px 20px;
+    }
+    .container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    /* =========================
+       HEADER
+    ========================= */
+    .header {
+      background: #17201b;
+      color: white;
+      padding: 42px 40px;
+      border-radius: 18px 18px 0 0;
+    }
+    .header h1 {
+      font-size: 30px;
+      line-height: 1.25;
+      margin-bottom: 14px;
+    }
+    .header p {
+      color: #d6ddd8;
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: 620px;
+    }
+    .required-note {
+      margin-top: 20px;
+      font-size: 13px;
+      color: #bfc9c2;
+    }
+    .required-note span {
+      color: #ff5b5b;
+      font-weight: bold;
+    }
+    /* =========================
+       FORM
+    ========================= */
+    form {
+      background: white;
+      padding: 40px;
+      border-radius: 0 0 18px 18px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.07);
+    }
+    .form-group {
+      margin-bottom: 34px;
+    }
+    .question {
+      display: block;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 9px;
+    }
+    .required {
+      color: #e53935;
+      margin-left: 3px;
+    }
+    .question-description {
+      color: #6b756e;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    /* =========================
+       INPUTS
+    ========================= */
+    input[type="text"],
+    textarea {
+      width: 100%;
+      border: 1px solid #d6ddd8;
+      border-radius: 10px;
+      padding: 14px 15px;
+      font-family: inherit;
+      font-size: 15px;
+      color: #17201b;
+      background: #fff;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    input[type="text"] {
+      height: 50px;
+    }
+    textarea {
+      min-height: 145px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: #239b56;
+      box-shadow: 0 0 0 3px rgba(35, 155, 86, 0.12);
+    }
+    input::placeholder,
+    textarea::placeholder {
+      color: #9aa49e;
+    }
+    /* =========================
+       RADIO BUTTONS
+    ========================= */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #dce2de;
+      border-radius: 10px;
+      padding: 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-size: 14px;
+    }
+    .radio-option:hover {
+      border-color: #239b56;
+      background: #f7fcf9;
+    }
+    .radio-option input {
+      width: 17px;
+      height: 17px;
+      accent-color: #239b56;
+      cursor: pointer;
+    }
+    /* =========================
+       DIVIDER
+    ========================= */
+    .divider {
+      height: 1px;
+      background: #edf0ee;
+      margin: 10px 0 35px;
+    }
+    /* =========================
+       SUBMIT
+    ========================= */
+    .submit-button {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 16px 20px;
+      background: #239b56;
+      color: white;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .submit-button:hover {
+      background: #1c8148;
+      transform: translateY(-1px);
+    }
+    .submit-button:disabled {
+      background: #9fb7a7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .submit-note {
+      text-align: center;
+      color: #7a847e;
+      font-size: 12px;
+      margin-top: 13px;
+      line-height: 1.5;
+    }
+    /* =========================
+       SUCCESS POPUP
+    ========================= */
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(12, 20, 15, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.25s ease;
+      z-index: 9999;
+    }
+    .success-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    .success-popup {
+      width: 100%;
+      max-width: 430px;
+      background: white;
+      border-radius: 18px;
+      padding: 38px 30px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+      transform: translateY(20px) scale(0.97);
+      transition: 0.25s ease;
+    }
+    .success-overlay.show .success-popup {
+      transform: translateY(0) scale(1);
+    }
+    .success-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #dcfce7;
+      color: #239b56;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 34px;
+      font-weight: bold;
+    }
+    .success-popup h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #17201b;
+    }
+    .success-popup p {
+      color: #68736c;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .close-success {
+      border: none;
+      background: #239b56;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 9px;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .close-success:hover {
+      background: #1c8148;
+    }
+    /* =========================
+       MOBILE
+    ========================= */
+    @media (max-width: 600px) {
+      body {
+        padding: 15px 10px;
+      }
+      .header {
+        padding: 30px 23px;
+        border-radius: 14px 14px 0 0;
+      }
+      .header h1 {
+        font-size: 24px;
+      }
+      form {
+        padding: 28px 22px;
+        border-radius: 0 0 14px 14px;
+      }
+      .form-group {
+        margin-bottom: 29px;
+      }
+      .question {
+        font-size: 15px;
+      }
+      textarea {
+        min-height: 135px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- =========================
+         HEADER
+    ========================= -->
+    <header class="header">
+      <h1>
+        Monthly Mentee Progress Check-in
+      </h1>
+      <p>
+        This is your monthly space to honestly reflect on your journey.
+        Tell me what you have learned, what you struggled with, what you
+        accomplished, and where you want to go next. There are no perfect
+        answers here. The goal is to understand your real progress and
+        help you become a more independent and capable developer.
+      </p>
+      <div class="required-note">
+        <span>*</span> All questions are required.
+      </div>
+    </header>
+    <!-- =========================
+         FORM
+    ========================= -->
+    <form
+      id="progressForm"
+      action="https://docs.google.com/forms/d/e/1FAIpQLSfTrJBfDd3B51Y3mmiNJwx-XnQO973sf7zey-80z8CYuk56sw/formResponse"
+      method="POST"
+      target="hidden_iframe"
+    >
+      <!-- QUESTION 1 -->
+      <div class="form-group">
+        <label class="question">
+          What is your name?
+          <span class="required">*</span>
+        </label>
+        <p class="question-description">
+          Enter the name you normally use during our mentoring sessions.
+        </p>
+        <input
+          type="text"
+          name="entry.1678837428"
+          placeholder="Your name"
+          required
+        >
+      </div>
+      <div class="divider"></div>
+      <!-- QUESTION 2 -->
+      <div class="form-group">
+        <label class="question">
+          What are you currently learning?
+          <span class="required">*</span>
+        </label>
+        <p class="question-description">
+          Tell me what technology, programming concept, framework,
+          language, or development area you have mainly been working on.
+        </p>
+        <textarea
+          name="entry.1049929515"
+          placeholder="Tell me what you have been learning..."
+          required
+        ></textarea>
+      </div>
+      <!-- QUESTION 3 -->
+      <div class="form-group">
+        <label class="question">
+          What did you learn or work on this month?
+          <span class="required">*</span>
+        </label>
+        <p class="question-description">
+          Describe the things you actually worked on during this month.
+          You can mention concepts you learned, features you built,
+          exercises you completed, projects you worked on, or anything
+          else that contributed to your development.
+        </p>
+        <textarea
+          name="entry.411787905"
+          placeholder="Write about what you learned and worked on..."
+          required
+        ></textarea>
+      </div>
+      <!-- QUESTION 4 -->
+      <div class="form-group">
+        <label class="question">
+          How much progress do you feel you made?
+          <span class="required">*</span>
+        </label>
+        <p class="question-description">
+          Don't just say "a lot" or "a little." Explain what you can do
+          now that you could not do before, what became easier, and what
+          you understand better than you did at the beginning.
+        </p>
+        <textarea
+          name="entry.514253548"
+          placeholder="Describe your progress honestly..."
+          required
+        ></textarea>
+      </div>
+      <!-- QUESTION 5 -->
+      <div class="form-group">
+        <label class="question">
+          What was the biggest challenge or difficulty you faced?
+          <span class="required">*</span>
+        </label>
+        <p class="question-description">
+          Think about the part of your learning that frustrated you,
+          confused you, slowed you down, or made you want to stop.
+          Be specific about what happened.
+        </p>
+        <textarea
+          name="entry.1289612374"
+          placeholder="What was difficult for you?"
+          required
+        ></textarea>
+      </div>
+      <!-- QUESTION 6 -->
+      <div class="form-group">
+        <label class="question">
+          What did you do when you got stuck?
+          <span class="required">*</span>
+        </label>
+        <p class="question-description">
+          Explain what you actually did when you could not solve a
+          problem. For example, you might have read documentation,
+          searched for an explanation, debugged the problem, asked
+          someone for help, or tried another approach.
+        </p>
+        <textarea
+          name="entry.1294191751"
+          placeholder="What did you do when you got stuck?"
+          required
+        ></textarea>
+      </div>
+      <!-- QUESTION 7 -->
+      <div class="form-group">
+        <label class="question">
+          What prevented you from making more progress?
+          <span class="required">*</span>
+        </label>
+        <p class="question-description">
+          Be honest. This could be lack of consistency, distractions,
+          confusion, lack of time, fear of making mistakes, difficulty
+          understanding something, or another reason.
+        </p>
+        <textarea
+          name="entry.1432854221"
+          placeholder="What got in your way?"
+          required
+        ></textarea>
+      </div>
+      <!-- QUESTION 8 -->
+      <div class="form-group">
+        <label class="question">
+          What do you want to improve about your consistency?
+          <span class="required">*</span>
+        </label>
+        <p class="question-description">
+          Think about your habits this month. What would you like to
+          change or do differently so that you can make better progress
+          next month?
+        </p>
+        <textarea
+          name="entry.1395734323"
+          placeholder="What do you want to improve?"
+          required
+        ></textarea>
+      </div>
+      <!-- QUESTION 9 -->
+      <div class="form-group">
+        <label class="question">
+          Do you need help with anything right now?
+          <span class="required">*</span>
+        </label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input
+              type="radio"
+              name="entry.906197980"
+              value="Yes"
+              required
+            >
+            Yes, I need help
+          </label>
+          <label class="radio-option">
+            <input
+              type="radio"
+              name="entry.906197980"
+              value="No"
+            >
+            No, I'm okay for now
+          </label>
+        </div>
+      </div>
+      <!-- QUESTION 10 -->
+      <div class="form-group">
+        <label class="question">
+          What do you want to achieve next?
+          <span class="required">*</span>
+        </label>
+        <p class="question-description">
+          Think about your next stage. What specific skill, project,
+          concept, or milestone do you want to reach before our next
+          monthly check-in?
+        </p>
+        <textarea
+          name="entry.1453963358"
+          placeholder="What is your next goal?"
+          required
+        ></textarea>
+      </div>
+      <!-- QUESTION 11 -->
+      <div class="form-group">
+        <label class="question">
+          How do you feel about your progress overall?
+          <span class="required">*</span>
+        </label>
+        <p class="question-description">
+          Take a moment to look back at where you started and where you
+          are now. Tell me honestly how you feel about your progress,
+          confidence, struggles, and growth.
+        </p>
+        <textarea
+          name="entry.582477585"
+          placeholder="Tell me honestly how you feel..."
+          required
+        ></textarea>
+      </div>
+      <!-- SUBMIT -->
+      <button
+        type="submit"
+        class="submit-button"
+        id="submitButton"
+      >
+        Submit Progress Check-in
+      </button>
+      <p class="submit-note">
+        Your responses will be recorded privately for your monthly
+        mentoring progress review.
+      </p>
+    </form>
+  </div>
+  <!-- =========================
+       HIDDEN GOOGLE FORM FRAME
+  ========================= -->
+  <iframe
+    name="hidden_iframe"
+    id="hidden_iframe"
+    style="display:none;"
+  ></iframe>
+  <!-- =========================
+       SUCCESS POPUP
+  ========================= -->
+  <div
+    class="success-overlay"
+    id="successOverlay"
+  >
+    <div class="success-popup">
+      <div class="success-icon">
+        ✓
+      </div>
+      <h2>
+        Submitted Successfully!
+      </h2>
+      <p>
+        Your monthly progress check-in has been recorded.
+        Thank you for taking the time to reflect honestly on your
+        journey. Keep building, keep learning, and keep showing up.
+      </p>
+      <button
+        type="button"
+        class="close-success"
+        onclick="closeSuccess()"
+      >
+        Done
+      </button>
+    </div>
+  </div>
+  <script>
+    const form = document.getElementById("progressForm");
+    const submitButton =
+      document.getElementById("submitButton");
+    const successOverlay =
+      document.getElementById("successOverlay");
+    form.addEventListener("submit", function () {
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting...";
+      /*
+        Google Forms receives the response through
+        the hidden iframe.
+        We wait briefly before showing the success
+        message so the request has time to reach Google.
+      */
+      setTimeout(function () {
+        successOverlay.classList.add("show");
+        submitButton.disabled = false;
+        submitButton.textContent =
+          "Submit Progress Check-in";
+      }, 1000);
+    });
+    function closeSuccess() {
+      successOverlay.classList.remove("show");
+      form.reset();
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+    /*
+      Allow closing the popup by clicking
+      outside the popup.
+    */
+    successOverlay.addEventListener("click", function (event) {
+      if (event.target === successOverlay) {
+        closeSuccess();
+      }
+    });
+  </script>
+</body>
+</html>
